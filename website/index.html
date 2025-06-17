@@ -44,6 +44,26 @@
     }
     /* Checklist */
     .checklist-item.completed label { @apply line-through text-gray-500; }
+
+    /* Revolving galaxy layers */
+    .galaxy {
+      @apply fixed top-1/2 left-1/2 pointer-events-none opacity-30;
+      width: 1200px;
+      height: 1200px;
+      margin-top: -600px;
+      margin-left: -600px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      animation: revolve linear infinite;
+      transform: translate(var(--tx,0), var(--ty,0)) rotate(var(--angle,0));
+    }
+    .galaxy.layer-1 { animation-duration: 60s; }
+    .galaxy.layer-2 { animation-duration: 80s; }
+    .galaxy.layer-3 { animation-duration: 100s; }
+    @keyframes revolve {
+      from { --angle: 0deg; }
+      to { --angle: 360deg; }
+    }
     /* White particle (stars) */
     .particle {
       @apply fixed w-1.5 h-1.5 bg-white rounded-full opacity-80 pointer-events-none;
@@ -73,6 +93,11 @@
     }
     setInterval(createParticle, 300);
   </script>
+
+  <!-- Revolving galaxies -->
+  <div class="galaxy layer-1" style="background-image:url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1600&q=80')"></div>
+  <div class="galaxy layer-2" style="background-image:url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1600&q=80')"></div>
+  <div class="galaxy layer-3" style="background-image:url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=1600&q=80')"></div>
 
   <!-- Navigation -->
   <nav>
@@ -254,6 +279,16 @@
       const opts={responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100}},animation:{duration:1500}};
       const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){new Chart(ctx,{type:'bar',data,options:opts});obs.unobserve(e.target);}}),{threshold:0.5});
       obs.observe(document.getElementById('authChart'));
+
+      // Parallax effect for galaxy layers
+      document.addEventListener('mousemove', e => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 20;
+        const y = (e.clientY / window.innerHeight - 0.5) * 20;
+        document.querySelectorAll('.galaxy').forEach((g,i)=>{
+          g.style.setProperty('--tx', `${x*(i+1)}px`);
+          g.style.setProperty('--ty', `${y*(i+1)}px`);
+        });
+      });
     });
   </script>
 </body>
