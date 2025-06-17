@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upesh Bishwakarma | AI Innovator & Storyteller</title>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Base & Typography */
+    body {
+      @apply overflow-x-hidden font-sans bg-black text-white;
+      background-color: #000;
+    }
+    /* Gradient-shift hero text */
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease-in-out infinite;
+    }
+    @keyframes gradientShift {
+      0%,100% { background-position: 0% 50% }
+      50%   { background-position:100% 50% }
+    }
+    /* Nav */
+    nav { @apply fixed top-0 w-full bg-black bg-opacity-80 backdrop-blur-sm z-50; }
+    .nav-links a { @apply text-gray-300 hover:text-cyan-400 transition; }
+    /* Section cards */
+    .section-card {
+      @apply bg-black bg-opacity-40 border border-gray-700 rounded-2xl p-8 transition-transform transform hover:-translate-y-2 hover:shadow-xl;
+    }
+    /* Tabs */
+    .tab-button {
+      @apply w-full p-3 rounded-lg font-semibold bg-black bg-opacity-50 text-gray-200 hover:bg-opacity-75 transition;
+    }
+    .tab-button.active {
+      @apply bg-gradient-to-r from-cyan-400 to-magenta-400 text-white;
+    }
+    /* Checklist */
+    .checklist-item.completed label { @apply line-through text-gray-500; }
+    /* White particle (stars) */
+    .particle {
+      @apply fixed w-1.5 h-1.5 bg-white rounded-full opacity-80 pointer-events-none;
+      animation: float 8s infinite linear;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0 }
+      10%  { opacity: .8 }
+      90%  { opacity: .8 }
+      100% { transform: translateY(-50px) translateX(20px) rotate(360deg); opacity: 0 }
+    }
+    /* Chart container */
+    .chart-container { @apply relative w-full max-w-lg mx-auto h-64 md:h-80; }
+  </style>
+</head>
+<body>
+
+  <!-- Floating white 'stars' -->
+  <script>
+    function createParticle() {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (Math.random() * 6 + 6) + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 8000);
+    }
+    setInterval(createParticle, 300);
+  </script>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold">Upesh Bishwakarma</div>
+      <ul class="nav-links hidden md:flex space-x-8">
+        <li><a href="#foundation">Foundation</a></li>
+        <li><a href="#now">Now</a></li>
+        <li><a href="#future">Future</a></li>
+        <li><a href="#strategy">Strategy</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="h-screen flex items-center justify-center relative">
+    <div class="text-center px-6">
+      <h1 class="hero-title mb-4">Architecting Tomorrow</h1>
+      <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+        I'm Upesh Bishwakarma—a Dell Case Manager turned AI innovator and storyteller. I build future-ready brands that blend authenticity with cutting-edge technology.
+      </p>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-6 py-12 space-y-24">
+
+    <!-- Foundation -->
+    <section id="foundation">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold">The Foundation</h2>
+        <p class="text-gray-400">My personal brand rooted in story, skill, and genuine connection.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="section-card">
+          <h3 class="text-2xl font-semibold mb-4">Brand Anatomy</h3>
+          <div id="site-structure" class="grid grid-cols-2 gap-4"></div>
+        </div>
+        <div class="section-card">
+          <h3 class="text-2xl font-semibold mb-4">Visitor Journey</h3>
+          <div id="funnel-diagram" class="space-y-1"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Now -->
+    <section id="now">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold">The Now</h2>
+        <p class="text-gray-400">Creator economy & authenticity shaping my narrative.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="section-card">
+          <h3 class="text-2xl font-semibold mb-4">Trust in Authenticity</h3>
+          <div class="chart-container">
+            <canvas id="authChart"></canvas>
+          </div>
+        </div>
+        <div class="section-card space-y-6">
+          <div>
+            <h4 class="font-bold text-lg">Creator-Driven Growth</h4>
+            <p class="text-gray-300">Building niche communities through consistent, real content.</p>
+          </div>
+          <div>
+            <h4 class="font-bold text-lg">Human-Centric Tech</h4>
+            <p class="text-gray-300">Leveraging AI to enhance, not replace, genuine interactions.</p>
+          </div>
+          <div>
+            <h4 class="font-bold text-lg">Sustained Value</h4>
+            <p class="text-gray-300">Focusing on long-term impact over viral moments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Future -->
+    <section id="future">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold">The Future</h2>
+        <p class="text-gray-400">Adaptive, immersive, and emotionally intelligent brand experiences.</p>
+      </div>
+      <div class="section-card">
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3 space-y-2">
+            <button class="tab-button active" data-tab="ai">AI Personalization</button>
+            <button class="tab-button" data-tab="hyper">Hyper-Personalization</button>
+            <button class="tab-button" data-tab="immersive">AR/VR Immersion</button>
+            <button class="tab-button" data-tab="eq">Emotional AI</button>
+          </div>
+          <div id="tech-content" class="md:w-2/3 mt-6 md:mt-0 md:pl-6"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Strategy -->
+    <section id="strategy">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold">The Strategy</h2>
+        <p class="text-gray-400">Action plan for blending tech with true human voice.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+        <div class="section-card">
+          <h3 class="text-2xl font-semibold mb-4">Core Balance</h3>
+          <div class="relative mb-6">
+            <div class="h-1 bg-gray-700 rounded-full"></div>
+            <div class="absolute inset-x-0 top-0 flex justify-between -mt-4 text-center">
+              <div><div class="text-2xl">🤖</div><p class="font-semibold">Tech</p></div>
+              <div><div class="text-2xl">🤝</div><p class="font-semibold">Human</p></div>
+            </div>
+          </div>
+          <p class="text-gray-300">Use AI to empower authenticity—and vice versa.</p>
+        </div>
+        <div class="section-card">
+          <h3 class="text-2xl font-semibold mb-4">Checklist</h3>
+          <div id="recommendations" class="space-y-4"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-black bg-opacity-80 text-center py-6">
+    <p class="text-gray-500">© 2025 Upesh Bishwakarma — Architecting authentic AI-driven brands</p>
+  </footer>
+
+  <!-- Interactivity JS (same as before) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const structure = [
+        {name:'Homepage',desc:'Anchor with impact.'},
+        {name:'About',desc:'Your journey & values.'},
+        {name:'Portfolio',desc:'Proof of expertise.'},
+        {name:'Blog',desc:'Insights & stories.'},
+        {name:'Testimonials',desc:'Social proof.'},
+        {name:'Contact',desc:'Easy connection.'}
+      ];
+      const funnel = [
+        {name:'Discover','color':'bg-gray-600','desc':'Find your story.'},
+        {name:'Engage','color':'bg-gray-500','desc':'Build curiosity.'},
+        {name:'Act','color':'bg-gray-400','desc':'Drive action.'},
+        {name:'Return','color':'bg-gray-300','desc':'Foster loyalty.'}
+      ];
+      const structEl = document.getElementById('site-structure');
+      structure.forEach(item=>{
+        const c=document.createElement('div');c.className='cursor-pointer p-4 bg-white bg-opacity-10 rounded-lg text-center hover:bg-opacity-20';
+        c.innerHTML=`<h4 class="font-semibold">${item.name}</h4>`;
+        c.onclick=()=>alert(`${item.name}\n\n${item.desc}`);
+        structEl.appendChild(c);
+      });
+      const funnelEl = document.getElementById('funnel-diagram');
+      funnel.forEach(item=>{
+        const s=document.createElement('div');s.className=`py-3 text-center font-semibold rounded ${item.color} hover:scale-105 transform transition`;
+        s.textContent=item.name;
+        s.onclick=()=>alert(`${item.name}\n\n${item.desc}`);
+        funnelEl.appendChild(s);
+      });
+      const tech={
+        ai:{title:'AI Personalization',text:'Responsive, adaptive UX.',points:['Smart recs','Content AI','Behavioral insights']},
+        hyper:{title:'Hyper-Personalization',text:'Predict & delight users.',points:['Real-time offers','Chatbot context','Loyalty boost']},
+        immersive:{title:'AR/VR Immersion',text:'Virtual brand worlds.',points:['AR try-ons','AI avatars','Multi-sensory UI']},
+        eq:{title:'Emotional AI',text:'Mood-aware interactions.',points:['Tone adapt','Empathy bots','Deeper bonds']}
+      };
+      document.querySelectorAll('.tab-button').forEach(btn=>btn.onclick=()=>{
+        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const c=tech[btn.dataset.tab];
+        document.getElementById('tech-content').innerHTML=`<h4 class="text-xl font-bold mb-2">${c.title}</h4><p class="mb-3">${c.text}</p><ul class="list-disc list-inside space-y-1">${c.points.map(p=>`<li>${p}</li>`).join('')}</ul>`;
+      });
+      document.querySelector('.tab-button').click();
+      const recs=['Evolve your story','Nurture real connections','Set AI goals','Prioritize empathy','Use generative AI','Plan for AR/VR','Maintain ethics','Optimize journeys'];
+      const recEl=document.getElementById('recommendations');
+      recs.forEach((r,i)=>{
+        const d=document.createElement('div');d.className='flex items-center bg-white bg-opacity-10 p-3 rounded-lg';
+        d.innerHTML=`<input id="chk${i}" type="checkbox" class="mr-3 accent-white"><label for="chk${i}">${r}</label>`;
+        d.querySelector('input').onchange=e=>d.classList.toggle('completed',e.target.checked);
+        recEl.appendChild(d);
+      });
+      const ctx=document.getElementById('authChart').getContext('2d');
+      const data={labels:['Value authenticity','Trust drives'],datasets:[{data:[88,81],backgroundColor:['rgba(255,255,255,0.6)','rgba(200,200,200,0.6)']}]};
+      const opts={responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100}},animation:{duration:1500}};
+      const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){new Chart(ctx,{type:'bar',data,options:opts});obs.unobserve(e.target);}}),{threshold:0.5});
+      obs.observe(document.getElementById('authChart'));
+    });
+  </script>
+</body>
+</html>
