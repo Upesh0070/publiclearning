@@ -1,295 +1,612 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Upesh Bishwakarma | AI Innovator & Storyteller</title>
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    /* Base & Typography */
-    body {
-      @apply overflow-x-hidden font-sans bg-black text-white;
-      background-color: #000;
-    }
-    /* Gradient-shift hero text */
-    .hero-title {
-      font-size: 4rem;
-      font-weight: 700;
-      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientShift 4s ease-in-out infinite;
-    }
-    @keyframes gradientShift {
-      0%,100% { background-position: 0% 50% }
-      50%   { background-position:100% 50% }
-    }
-    /* Nav */
-    nav { @apply fixed top-0 w-full bg-black bg-opacity-80 backdrop-blur-sm z-50; }
-    .nav-links a { @apply text-gray-300 hover:text-cyan-400 transition; }
-    /* Section cards */
-    .section-card {
-      @apply bg-black bg-opacity-40 border border-gray-700 rounded-2xl p-8 transition-transform transform hover:-translate-y-2 hover:shadow-xl;
-    }
-    /* Tabs */
-    .tab-button {
-      @apply w-full p-3 rounded-lg font-semibold bg-black bg-opacity-50 text-gray-200 hover:bg-opacity-75 transition;
-    }
-    .tab-button.active {
-      @apply bg-gradient-to-r from-cyan-400 to-magenta-400 text-white;
-    }
-    /* Checklist */
-    .checklist-item.completed label { @apply line-through text-gray-500; }
-
-    /* Revolving galaxy layers */
-    .galaxy {
-      @apply fixed top-1/2 left-1/2 pointer-events-none opacity-30;
-      width: 1200px;
-      height: 1200px;
-      margin-top: -600px;
-      margin-left: -600px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      animation: revolve linear infinite;
-      transform: translate(var(--tx,0), var(--ty,0)) rotate(var(--angle,0));
-    }
-    .galaxy.layer-1 { animation-duration: 60s; }
-    .galaxy.layer-2 { animation-duration: 80s; }
-    .galaxy.layer-3 { animation-duration: 100s; }
-    @keyframes revolve {
-      from { --angle: 0deg; }
-      to { --angle: 360deg; }
-    }
-    /* White particle (stars) */
-    .particle {
-      @apply fixed w-1.5 h-1.5 bg-white rounded-full opacity-80 pointer-events-none;
-      animation: float 8s infinite linear;
-    }
-    @keyframes float {
-      0%   { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0 }
-      10%  { opacity: .8 }
-      90%  { opacity: .8 }
-      100% { transform: translateY(-50px) translateX(20px) rotate(360deg); opacity: 0 }
-    }
-    /* Chart container */
-    .chart-container { @apply relative w-full max-w-lg mx-auto h-64 md:h-80; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Veo Ecosystem: An Interactive Analysis with Gemini AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral (Stone, Amber, Slate) -->
+    <!-- Application Structure Plan: A thematic, multi-section dashboard with top navigation. This structure avoids a long, linear scroll and allows users to jump directly to topics of interest (like Competitors or Prompting). Key interactions include a dynamic comparison chart, a prompt builder, and new Gemini-powered features for ad concept generation and prompt enhancement to transform passive reading into active exploration. -->
+    <!-- Visualization & Content Choices: Report Info: Competitive Matrix -> Goal: Compare -> Viz: Interactive Bar Chart (Chart.js) -> Interaction: Dropdown to select feature -> Justification: Directly visualizes comparison data. Report Info: Ad Workflow -> Goal: Organize -> Viz: HTML/CSS Timeline -> Interaction: Click-to-expand -> Justification: Breaks down a process into digestible steps. Report Info: Prompting Guides -> Goal: Instruct -> Viz: Interactive Form + Gemini API -> Interaction: User builds a prompt, then enhances it with AI -> Justification: Teaches prompting principles through hands-on practice and AI assistance. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f4; /* stone-100 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #d97706; /* amber-600 */
+        }
+        .nav-link.active {
+            color: #b45309; /* amber-700 */
+            border-bottom-color: #b45309;
+        }
+        .tab.active {
+            background-color: #f59e0b; /* amber-400 */
+            color: #1e293b; /* slate-800 */
+        }
+        .workflow-step:before {
+            content: '';
+            position: absolute;
+            top: 1.25rem;
+            left: -1rem;
+            width: 2rem;
+            height: 2px;
+            background-color: #d6d3d1; /* stone-300 */
+        }
+        .workflow-step:first-child:before {
+            display: none;
+        }
+        .loader {
+            border-top-color: #f59e0b;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<body>
+<body class="text-slate-700">
 
-  <!-- Floating white 'stars' -->
-  <script>
-    function createParticle() {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.animationDuration = (Math.random() * 6 + 6) + 's';
-      document.body.appendChild(p);
-      setTimeout(() => p.remove(), 8000);
-    }
-    setInterval(createParticle, 300);
-  </script>
-
-  <!-- Revolving galaxies -->
-  <div class="galaxy layer-1" style="background-image:url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1600&q=80')"></div>
-  <div class="galaxy layer-2" style="background-image:url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=1600&q=80')"></div>
-  <div class="galaxy layer-3" style="background-image:url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&w=1600&q=80')"></div>
-
-  <!-- Navigation -->
-  <nav>
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="text-2xl font-bold">Upesh Bishwakarma</div>
-      <ul class="nav-links hidden md:flex space-x-8">
-        <li><a href="#foundation">Foundation</a></li>
-        <li><a href="#now">Now</a></li>
-        <li><a href="#future">Future</a></li>
-        <li><a href="#strategy">Strategy</a></li>
-      </ul>
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-xl flex flex-col items-center">
+            <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24 mb-4"></div>
+            <h2 class="text-center text-slate-700 text-xl font-semibold">Generating with AI...</h2>
+            <p class="w-1/2 text-center text-slate-500">This may take a few moments.</p>
+        </div>
     </div>
-  </nav>
 
-  <!-- Hero -->
-  <header class="h-screen flex items-center justify-center relative">
-    <div class="text-center px-6">
-      <h1 class="hero-title mb-4">Architecting Tomorrow</h1>
-      <p class="text-lg text-gray-300 max-w-2xl mx-auto">
-        I'm Upesh Bishwakarma—a Dell Case Manager turned AI innovator and storyteller. I build future-ready brands that blend authenticity with cutting-edge technology.
-      </p>
-    </div>
-  </header>
-
-  <main class="container mx-auto px-6 py-12 space-y-24">
-
-    <!-- Foundation -->
-    <section id="foundation">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold">The Foundation</h2>
-        <p class="text-gray-400">My personal brand rooted in story, skill, and genuine connection.</p>
-      </div>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="section-card">
-          <h3 class="text-2xl font-semibold mb-4">Brand Anatomy</h3>
-          <div id="site-structure" class="grid grid-cols-2 gap-4"></div>
-        </div>
-        <div class="section-card">
-          <h3 class="text-2xl font-semibold mb-4">Visitor Journey</h3>
-          <div id="funnel-diagram" class="space-y-1"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Now -->
-    <section id="now">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold">The Now</h2>
-        <p class="text-gray-400">Creator economy & authenticity shaping my narrative.</p>
-      </div>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="section-card">
-          <h3 class="text-2xl font-semibold mb-4">Trust in Authenticity</h3>
-          <div class="chart-container">
-            <canvas id="authChart"></canvas>
-          </div>
-        </div>
-        <div class="section-card space-y-6">
-          <div>
-            <h4 class="font-bold text-lg">Creator-Driven Growth</h4>
-            <p class="text-gray-300">Building niche communities through consistent, real content.</p>
-          </div>
-          <div>
-            <h4 class="font-bold text-lg">Human-Centric Tech</h4>
-            <p class="text-gray-300">Leveraging AI to enhance, not replace, genuine interactions.</p>
-          </div>
-          <div>
-            <h4 class="font-bold text-lg">Sustained Value</h4>
-            <p class="text-gray-300">Focusing on long-term impact over viral moments.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Future -->
-    <section id="future">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold">The Future</h2>
-        <p class="text-gray-400">Adaptive, immersive, and emotionally intelligent brand experiences.</p>
-      </div>
-      <div class="section-card">
-        <div class="flex flex-col md:flex-row">
-          <div class="md:w-1/3 space-y-2">
-            <button class="tab-button active" data-tab="ai">AI Personalization</button>
-            <button class="tab-button" data-tab="hyper">Hyper-Personalization</button>
-            <button class="tab-button" data-tab="immersive">AR/VR Immersion</button>
-            <button class="tab-button" data-tab="eq">Emotional AI</button>
-          </div>
-          <div id="tech-content" class="md:w-2/3 mt-6 md:mt-0 md:pl-6"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Strategy -->
-    <section id="strategy">
-      <div class="text-center mb-8">
-        <h2 class="text-3xl font-bold">The Strategy</h2>
-        <p class="text-gray-400">Action plan for blending tech with true human voice.</p>
-      </div>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="section-card">
-          <h3 class="text-2xl font-semibold mb-4">Core Balance</h3>
-          <div class="relative mb-6">
-            <div class="h-1 bg-gray-700 rounded-full"></div>
-            <div class="absolute inset-x-0 top-0 flex justify-between -mt-4 text-center">
-              <div><div class="text-2xl">🤖</div><p class="font-semibold">Tech</p></div>
-              <div><div class="text-2xl">🤝</div><p class="font-semibold">Human</p></div>
+    <header class="bg-stone-50/80 backdrop-blur-lg sticky top-0 z-40 border-b border-stone-200">
+        <nav class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <h1 class="text-xl md:text-2xl font-bold text-slate-800">Veo Ecosystem</h1>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#overview" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Overview</a>
+                    <a href="#technology" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Technology</a>
+                    <a href="#competitors" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Competitors</a>
+                    <a href="#advertising" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Advertising</a>
+                    <a href="#prompting" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Prompting</a>
+                    <a href="#future" class="nav-link text-slate-600 font-medium border-b-2 border-transparent pb-1">Future</a>
+                </div>
+                <div class="md:hidden">
+                    <select id="mobile-nav" class="bg-white border border-stone-300 rounded-md px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <option value="#overview">Overview</option>
+                        <option value="#technology">Technology</option>
+                        <option value="#competitors">Competitors</option>
+                        <option value="#advertising">Advertising</option>
+                        <option value="#prompting">Prompting</option>
+                        <option value="#future">Future</option>
+                    </select>
+                </div>
             </div>
-          </div>
-          <p class="text-gray-300">Use AI to empower authenticity—and vice versa.</p>
+        </nav>
+    </header>
+
+    <main>
+        <section id="overview" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">The Living Frame: An Interactive Analysis</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-12">This application provides an interactive exploration of Google's Veo, its technology, competitive landscape, and application in advertising. Navigate through the sections to dynamically visualize data and understand the key concepts of the generative video revolution.</p>
+                
+                <div class="grid md:grid-cols-2 gap-8 text-left">
+                    <div class="bg-stone-50 p-6 rounded-lg border border-stone-200">
+                        <h3 class="font-bold text-xl mb-3 text-slate-800">Key Findings</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-amber-600 mr-3 mt-1">▶</span>
+                                <div><strong class="text-slate-800">Technical Superiority in Audio:</strong> Veo's native, synchronized audio generation is its most significant current differentiator.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-600 mr-3 mt-1">▶</span>
+                                <div><strong class="text-slate-800">Ecosystem as a Moat:</strong> Deep integration into Google's platforms (Cloud, Workspace, YouTube) provides a powerful strategic advantage.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-600 mr-3 mt-1">▶</span>
+                                <div><strong class="text-slate-800">AI-Powered Ideation:</strong> Gemini API integration allows for rapid generation of creative ad concepts and enhanced video prompts.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-amber-600 mr-3 mt-1">▶</span>
+                                <div><strong class="text-slate-800">Cost-Effectiveness Drives Adoption:</strong> Radical reduction in production cost and time is the primary ROI for advertising applications.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-stone-50 p-6 rounded-lg border border-stone-200">
+                        <h3 class="font-bold text-xl mb-3 text-slate-800">Strategic Recommendations</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                 <span class="text-amber-600 mr-3 mt-1">▶</span>
+                                <div><strong class="text-slate-800">For Marketers:</strong> Use the AI Concept Generator to accelerate brainstorming and leverage cost efficiencies for A/B testing.</div>
+                            </li>
+                            <li class="flex items-start">
+                                 <span class="text-amber-600 mr-3 mt-1">▶</span>
+                                <div><strong class="text-slate-800">For Creatives:</strong> Use the Prompt Enhancer to learn advanced cinematic language and produce higher-quality visual assets.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="technology" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Deconstructing Veo's Technology</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-slate-600">Veo is built on a sophisticated architecture combining Latent Diffusion Models (LDMs) and Transformers. This flow visualizes how raw data is transformed into high-fidelity, audio-synchronized video.</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-8">
+                    <div class="text-center p-6 bg-white rounded-lg shadow-md border border-stone-200 w-full md:w-1/4">
+                        <div class="text-4xl mb-3">🗃️</div>
+                        <h3 class="font-bold text-lg text-slate-800">1. Encoding</h3>
+                        <p class="text-sm text-slate-600">Video & audio are compressed into an efficient, low-dimensional 'latent space'.</p>
+                    </div>
+                    <div class="text-2xl text-stone-400 hidden md:block">→</div>
+                     <div class="text-2xl text-stone-400 md:hidden">↓</div>
+                    <div class="text-center p-6 bg-white rounded-lg shadow-md border border-stone-200 w-full md:w-1/3">
+                        <div class="text-4xl mb-3">⚙️</div>
+                        <h3 class="font-bold text-lg text-slate-800">2. Latent Diffusion</h3>
+                        <p class="text-sm text-slate-600">Guided by a text prompt, a Transformer-based network refines random noise into a structured latent representation.</p>
+                    </div>
+                    <div class="text-2xl text-stone-400 hidden md:block">→</div>
+                    <div class="text-2xl text-stone-400 md:hidden">↓</div>
+                    <div class="text-center p-6 bg-white rounded-lg shadow-md border border-stone-200 w-full md:w-1/4">
+                        <div class="text-4xl mb-3">🎞️</div>
+                        <h3 class="font-bold text-lg text-slate-800">3. Decoding</h3>
+                        <p class="text-sm text-slate-600">The structured latent is decoded back into a high-resolution, audio-synced video.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="competitors" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">The Generative Video Arena</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-slate-600">Veo exists in a competitive landscape. Select a feature below to dynamically compare Veo against its key rivals: OpenAI's Sora, Runway, and Kling.</p>
+                </div>
+                
+                <div class="max-w-xs mx-auto mb-8">
+                    <label for="feature-select" class="block text-sm font-medium text-slate-700 mb-1">Select a feature to compare:</label>
+                    <select id="feature-select" class="w-full bg-white border border-stone-300 rounded-md px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <option value="maxLength" selected>Max Length (seconds)</option>
+                        <option value="nativeAudio">Native Audio (1=Yes, 0=No)</option>
+                        <option value="maxResolution">Max Resolution (p)</option>
+                    </select>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="competitorChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="advertising" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">The New Advertising Workflow</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-slate-600">Generative AI transforms ad creation from a linear, costly process into a rapid, iterative cycle. Explore the key stages and use the AI Concept Generator to accelerate your creative process.</p>
+                </div>
+                
+                <div class="relative w-full mb-16">
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-stone-300 transform -translate-y-1/2"></div>
+                    <div class="flex flex-col md:flex-row justify-between space-y-8 md:space-y-0">
+                        <div class="workflow-step relative flex-1 text-center px-4">
+                            <div class="flex items-center justify-center mx-auto w-10 h-10 rounded-full bg-amber-500 text-white font-bold mb-3 border-4 border-stone-100">1</div>
+                            <h3 class="font-semibold text-slate-800">Strategy</h3>
+                            <p class="text-sm text-slate-600">Define objectives and brainstorm concepts with AI assistance.</p>
+                        </div>
+                        <div class="workflow-step relative flex-1 text-center px-4">
+                            <div class="flex items-center justify-center mx-auto w-10 h-10 rounded-full bg-amber-500 text-white font-bold mb-3 border-4 border-stone-100">2</div>
+                            <h3 class="font-semibold text-slate-800">Pre-visualization</h3>
+                            <p class="text-sm text-slate-600">Create AI storyboards to visualize the narrative before rendering.</p>
+                        </div>
+                        <div class="workflow-step relative flex-1 text-center px-4">
+                            <div class="flex items-center justify-center mx-auto w-10 h-10 rounded-full bg-amber-500 text-white font-bold mb-3 border-4 border-stone-100">3</div>
+                            <h3 class="font-semibold text-slate-800">Asset Generation</h3>
+                            <p class="text-sm text-slate-600">Iteratively prompt Veo to create high-fidelity video clips.</p>
+                        </div>
+                        <div class="workflow-step relative flex-1 text-center px-4">
+                            <div class="flex items-center justify-center mx-auto w-10 h-10 rounded-full bg-amber-500 text-white font-bold mb-3 border-4 border-stone-100">4</div>
+                            <h3 class="font-semibold text-slate-800">Post-Production</h3>
+                            <p class="text-sm text-slate-600">Assemble clips, add graphics, and polish with human oversight.</p>
+                        </div>
+                        <div class="workflow-step relative flex-1 text-center px-4">
+                            <div class="flex items-center justify-center mx-auto w-10 h-10 rounded-full bg-amber-500 text-white font-bold mb-3 border-4 border-stone-100">5</div>
+                            <h3 class="font-semibold text-slate-800">A/B Testing</h3>
+                            <p class="text-sm text-slate-600">Deploy variations to optimize performance based on real data.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg border border-stone-200">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4 text-center">✨ AI Ad Concept Generator</h3>
+                    <p class="text-center text-slate-600 mb-6">Enter a product or service to generate three distinct video ad concepts.</p>
+                    <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                        <input type="text" id="product-input" placeholder="e.g., 'Artisanal coffee beans'" class="flex-grow w-full rounded-md border-stone-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                        <button id="generate-concepts-btn" class="w-full sm:w-auto bg-amber-500 text-white px-6 py-2 rounded-md hover:bg-amber-600 transition-colors">Generate Concepts</button>
+                    </div>
+                    <div id="ad-concepts-output" class="space-y-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="prompting" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">Mastering Veo: A Prompting Guide</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-slate-600">Effective prompting is the key to unlocking Veo's potential. Use these guides to learn the fundamentals and enhance your creations with AI.</p>
+                </div>
+                <div class="max-w-4xl mx-auto bg-stone-50 rounded-lg p-2 border border-stone-200">
+                    <div class="flex border-b border-stone-200">
+                        <button data-tab="beginner" class="tab flex-1 p-3 font-semibold transition-colors duration-300 active">Beginner's Promptbook</button>
+                        <button data-tab="advanced" class="tab flex-1 p-3 font-semibold transition-colors duration-300">Advanced Manual</button>
+                    </div>
+                    <div class="p-6 md:p-8">
+                        <div id="beginner-content" class="tab-content">
+                            <h3 class="text-2xl font-bold text-slate-800 mb-4">The A-C-T-S Formula</h3>
+                            <p class="mb-6 text-slate-600">A simple, structured approach for creating a well-defined video clip. Build your prompt, then use AI to enhance it with cinematic details.</p>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="prompt-action" class="block text-sm font-medium text-slate-700">Action & Subject</label>
+                                        <select id="prompt-action" class="prompt-builder mt-1 block w-full rounded-md border-stone-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                                            <option>A golden retriever catches a frisbee</option>
+                                            <option>A sleek espresso machine brews coffee</option>
+                                            <option>A medieval knight draws his sword</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="prompt-camera" class="block text-sm font-medium text-slate-700">Camera & Cinematography</label>
+                                        <select id="prompt-camera" class="prompt-builder mt-1 block w-full rounded-md border-stone-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                                            <option>aerial view</option>
+                                            <option>close-up shot</option>
+                                            <option>wide shot</option>
+                                            <option>low-angle shot</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="prompt-tone" class="block text-sm font-medium text-slate-700">Tone & Style</label>
+                                        <select id="prompt-tone" class="prompt-builder mt-1 block w-full rounded-md border-stone-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                                            <option>photorealistic, joyful tone</option>
+                                            <option>minimalist aesthetic, clean design</option>
+                                            <option>cinematic style, dramatic</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="prompt-setting" class="block text-sm font-medium text-slate-700">Setting & Scene Details</label>
+                                        <select id="prompt-setting" class="prompt-builder mt-1 block w-full rounded-md border-stone-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                                            <option>in a lush green park during golden hour</option>
+                                            <option>on a marble kitchen counter with soft lighting</option>
+                                            <option>in a misty forest with a shaft of light</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-4 rounded-md border border-stone-200 flex flex-col">
+                                    <h4 class="font-semibold text-slate-800 mb-2">Generated Prompt:</h4>
+                                    <p id="generated-prompt" class="flex-grow text-slate-700 font-mono text-sm"></p>
+                                    <div class="flex gap-2 mt-4">
+                                        <button id="copy-prompt-btn" class="w-full bg-slate-200 text-slate-700 px-4 py-2 rounded-md hover:bg-slate-300 transition-colors text-sm">Copy</button>
+ <a id="enhance-prompt-btn"
+   href="https://chatgpt.com/g/g-68675c3ebc288191a150663814317672-prompt-master"
+   target="_blank"
+   class="w-full block text-center bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-amber-600 transition-colors text-sm">
+  ✨ Enhance with AI
+</a>
+                                   </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="advanced-content" class="tab-content hidden">
+                             <h3 class="text-2xl font-bold text-slate-800 mb-4">Advanced Cinematic Control</h3>
+                             <p class="mb-6 text-slate-600">For precise results, use professional cinematic language and structured prompts. This level of detail is key for maintaining consistency across multi-shot sequences.</p>
+                             <div class="bg-slate-800 text-white rounded-md p-4 font-mono text-sm overflow-x-auto">
+                                 <h4 class="text-amber-300 mb-2">// Sample Multi-Shot Prompt Fragment</h4>
+                                 <p><strong class="text-sky-300">Shot 1 Prompt:</strong> "Medium close-up of a charismatic woman, 30s, with long wavy blonde hair, wearing a red silk dress. She sits in a quiet, lived-in home, light from a fireplace casting warm shadows. She looks directly at the camera and says, 'I think this is going to be a great day.' The background is softly blurred with shallow depth of field. Shot on vintage 16mm film, grainy, warm golden light."</p>
+                                 <br>
+                                 <p><strong class="text-sky-300">Shot 2 Prompt ("Jump To"):</strong> "Over-the-shoulder shot, from behind the woman. We see her looking at a man across the table. Maintain character: charismatic woman, 30s, with long wavy blonde hair, wearing a red silk dress. Maintain style: quiet, lived-in home, light from a fireplace, shot on vintage 16mm film, grainy, warm golden light. The man smiles."</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="future" class="py-16 md:py-24">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">The Path Forward</h2>
+                    <p class="max-w-3xl mx-auto text-lg text-slate-600">Understanding Veo's current limitations, ethical guardrails, and future trajectory is crucial for strategic planning and responsible creation.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200">
+                        <h3 class="font-bold text-lg text-slate-800 mb-2">Current Hurdles</h3>
+                        <ul class="list-disc list-inside text-slate-600 space-y-1 text-sm">
+                            <li>8-second clip length ceiling</li>
+                            <li>Inconsistent multi-shot continuity</li>
+                            <li>Poor rendering of text/logos</li>
+                            <li>Bias towards "cinematic" shots</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200">
+                        <h3 class="font-bold text-lg text-slate-800 mb-2">Ethical Guardrails</h3>
+                         <ul class="list-disc list-inside text-slate-600 space-y-1 text-sm">
+                            <li>SynthID invisible watermarking</li>
+                            <li>Content filtering for harmful prompts</li>
+                            <li>Blocking generation of public figures</li>
+                            <li>Adherence to FTC/IAB regulations</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200">
+                        <h3 class="font-bold text-lg text-slate-800 mb-2">Future Trajectory</h3>
+                        <ul class="list-disc list-inside text-slate-600 space-y-1 text-sm">
+                            <li>Extending maximum video length</li>
+                            <li>Mastering character/style consistency</li>
+                            <li>Moving towards real-time generation</li>
+                            <li>Deeper integration into Google ecosystem</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-stone-300 py-8">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>Interactive analysis based on "The Veo Ecosystem: A Strategic Analysis" report.</p>
+            <p>This is a conceptual application for educational purposes.</p>
         </div>
-        <div class="section-card">
-          <h3 class="text-2xl font-semibold mb-4">Checklist</h3>
-          <div id="recommendations" class="space-y-4"></div>
-        </div>
-      </div>
-    </section>
+    </footer>
 
-  </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
 
-  <footer class="bg-black bg-opacity-80 text-center py-6">
-    <p class="text-gray-500">© 2025 Upesh Bishwakarma — Architecting authentic AI-driven brands</p>
-  </footer>
+            const competitorData = {
+                labels: ['Google Veo', 'OpenAI Sora', 'Runway', 'Kling'],
+                datasets: {
+                    maxLength: {
+                        label: 'Max Length (seconds)',
+                        data: [8, 20, 30, 120],
+                        backgroundColor: 'rgba(245, 158, 11, 0.6)', // amber-400
+                        borderColor: 'rgba(180, 83, 9, 1)', // amber-700
+                    },
+                    nativeAudio: {
+                        label: 'Native Audio (1 = Yes)',
+                        data: [1, 0, 0, 1],
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)', // blue-500
+                        borderColor: 'rgba(29, 78, 216, 1)', // blue-700
+                    },
+                    maxResolution: {
+                        label: 'Max Resolution (p)',
+                        data: [1080, 1080, 1080, 1080],
+                        backgroundColor: 'rgba(16, 185, 129, 0.6)', // emerald-500
+                        borderColor: 'rgba(4, 120, 87, 1)', // emerald-700
+                    }
+                }
+            };
 
-  <!-- Interactivity JS (same as before) -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const structure = [
-        {name:'Homepage',desc:'Anchor with impact.'},
-        {name:'About',desc:'Your journey & values.'},
-        {name:'Portfolio',desc:'Proof of expertise.'},
-        {name:'Blog',desc:'Insights & stories.'},
-        {name:'Testimonials',desc:'Social proof.'},
-        {name:'Contact',desc:'Easy connection.'}
-      ];
-      const funnel = [
-        {name:'Discover','color':'bg-gray-600','desc':'Find your story.'},
-        {name:'Engage','color':'bg-gray-500','desc':'Build curiosity.'},
-        {name:'Act','color':'bg-gray-400','desc':'Drive action.'},
-        {name:'Return','color':'bg-gray-300','desc':'Foster loyalty.'}
-      ];
-      const structEl = document.getElementById('site-structure');
-      structure.forEach(item=>{
-        const c=document.createElement('div');c.className='cursor-pointer p-4 bg-white bg-opacity-10 rounded-lg text-center hover:bg-opacity-20';
-        c.innerHTML=`<h4 class="font-semibold">${item.name}</h4>`;
-        c.onclick=()=>alert(`${item.name}\n\n${item.desc}`);
-        structEl.appendChild(c);
-      });
-      const funnelEl = document.getElementById('funnel-diagram');
-      funnel.forEach(item=>{
-        const s=document.createElement('div');s.className=`py-3 text-center font-semibold rounded ${item.color} hover:scale-105 transform transition`;
-        s.textContent=item.name;
-        s.onclick=()=>alert(`${item.name}\n\n${item.desc}`);
-        funnelEl.appendChild(s);
-      });
-      const tech={
-        ai:{title:'AI Personalization',text:'Responsive, adaptive UX.',points:['Smart recs','Content AI','Behavioral insights']},
-        hyper:{title:'Hyper-Personalization',text:'Predict & delight users.',points:['Real-time offers','Chatbot context','Loyalty boost']},
-        immersive:{title:'AR/VR Immersion',text:'Virtual brand worlds.',points:['AR try-ons','AI avatars','Multi-sensory UI']},
-        eq:{title:'Emotional AI',text:'Mood-aware interactions.',points:['Tone adapt','Empathy bots','Deeper bonds']}
-      };
-      document.querySelectorAll('.tab-button').forEach(btn=>btn.onclick=()=>{
-        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        const c=tech[btn.dataset.tab];
-        document.getElementById('tech-content').innerHTML=`<h4 class="text-xl font-bold mb-2">${c.title}</h4><p class="mb-3">${c.text}</p><ul class="list-disc list-inside space-y-1">${c.points.map(p=>`<li>${p}</li>`).join('')}</ul>`;
-      });
-      document.querySelector('.tab-button').click();
-      const recs=['Evolve your story','Nurture real connections','Set AI goals','Prioritize empathy','Use generative AI','Plan for AR/VR','Maintain ethics','Optimize journeys'];
-      const recEl=document.getElementById('recommendations');
-      recs.forEach((r,i)=>{
-        const d=document.createElement('div');d.className='flex items-center bg-white bg-opacity-10 p-3 rounded-lg';
-        d.innerHTML=`<input id="chk${i}" type="checkbox" class="mr-3 accent-white"><label for="chk${i}">${r}</label>`;
-        d.querySelector('input').onchange=e=>d.classList.toggle('completed',e.target.checked);
-        recEl.appendChild(d);
-      });
-      const ctx=document.getElementById('authChart').getContext('2d');
-      const data={labels:['Value authenticity','Trust drives'],datasets:[{data:[88,81],backgroundColor:['rgba(255,255,255,0.6)','rgba(200,200,200,0.6)']}]};
-      const opts={responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100}},animation:{duration:1500}};
-      const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){new Chart(ctx,{type:'bar',data,options:opts});obs.unobserve(e.target);}}),{threshold:0.5});
-      obs.observe(document.getElementById('authChart'));
+            const ctx = document.getElementById('competitorChart').getContext('2d');
+            let competitorChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: competitorData.labels,
+                    datasets: [{
+                        ...competitorData.datasets.maxLength,
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Max Length (seconds)',
+                            font: {
+                                size: 16
+                            },
+                            color: '#334155'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e5e7eb'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
 
-      // Parallax effect for galaxy layers
-      document.addEventListener('mousemove', e => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 20;
-        const y = (e.clientY / window.innerHeight - 0.5) * 20;
-        document.querySelectorAll('.galaxy').forEach((g,i)=>{
-          g.style.setProperty('--tx', `${x*(i+1)}px`);
-          g.style.setProperty('--ty', `${y*(i+1)}px`);
+            const featureSelect = document.getElementById('feature-select');
+            featureSelect.addEventListener('change', (e) => {
+                const selectedFeature = e.target.value;
+                const newDataset = competitorData.datasets[selectedFeature];
+                competitorChart.data.datasets[0] = {
+                    ...newDataset,
+                    borderWidth: 2,
+                    borderRadius: 4,
+                };
+                competitorChart.options.plugins.title.text = newDataset.label;
+                competitorChart.update();
+            });
+
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    tabContents.forEach(content => {
+                        if (content.id === `${target}-content`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const promptBuilders = document.querySelectorAll('.prompt-builder');
+            const generatedPromptEl = document.getElementById('generated-prompt');
+            const copyPromptBtn = document.getElementById('copy-prompt-btn');
+            const enhancePromptBtn = document.getElementById('enhance-prompt-btn');
+
+            function updateGeneratedPrompt() {
+                const action = document.getElementById('prompt-action').value;
+                const camera = document.getElementById('prompt-camera').value;
+                const tone = document.getElementById('prompt-tone').value;
+                const setting = document.getElementById('prompt-setting').value;
+                const fullPrompt = `${tone}. An ${camera} of ${action} ${setting}.`;
+                generatedPromptEl.textContent = fullPrompt;
+            }
+
+            promptBuilders.forEach(select => {
+                select.addEventListener('change', updateGeneratedPrompt);
+            });
+            
+            copyPromptBtn.addEventListener('click', () => {
+                const promptText = generatedPromptEl.textContent;
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = promptText;
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                try {
+                    document.execCommand('copy');
+                    copyPromptBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyPromptBtn.textContent = 'Copy';
+                    }, 2000);
+                } catch (err) {
+                     copyPromptBtn.textContent = 'Failed';
+                }
+                document.body.removeChild(tempTextarea);
+            });
+
+            updateGeneratedPrompt();
+
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            function changeNav() {
+                let index = sections.length;
+                while(--index && window.scrollY + 50 < sections[index].offsetTop) {}
+                
+                navLinks.forEach((link) => link.classList.remove('active'));
+                if (navLinks[index]) {
+                   navLinks[index].classList.add('active');
+                }
+            }
+
+            changeNav();
+            window.addEventListener('scroll', changeNav);
+            
+            mobileNav.addEventListener('change', (e) => {
+                window.location.hash = e.target.value;
+            });
+
+            // Gemini API Integration
+            const loadingModal = document.getElementById('loading-modal');
+            const generateConceptsBtn = document.getElementById('generate-concepts-btn');
+            const productInput = document.getElementById('product-input');
+            const adConceptsOutput = document.getElementById('ad-concepts-output');
+
+            const callGemini = async (prompt) => {
+                loadingModal.classList.remove('hidden');
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }]
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`API call failed with status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Invalid response structure from API");
+                    }
+                } catch (error) {
+                    console.error("Gemini API call error:", error);
+                    return `Error: Could not generate content. ${error.message}`;
+                } finally {
+                    loadingModal.classList.add('hidden');
+                }
+            };
+
+            generateConceptsBtn.addEventListener('click', async () => {
+                const product = productInput.value.trim();
+                if (!product) {
+                    adConceptsOutput.innerHTML = `<p class="text-red-500">Please enter a product or service.</p>`;
+                    return;
+                }
+                
+                const prompt = `Generate three distinct, creative, one-sentence video ad concepts for a product called "${product}". The concepts should be suitable for generation with a text-to-video AI like Google Veo. For each concept, provide a title and a short description. Format the output as a simple, clean list.`;
+                
+                adConceptsOutput.innerHTML = `<div class="flex justify-center items-center"><div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div></div>`;
+                const responseText = await callGemini(prompt);
+
+                // Simple markdown-to-html
+                let htmlContent = responseText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-800">$1</strong>') // Bold
+                    .replace(/\n/g, '<br>'); // Newlines
+
+                adConceptsOutput.innerHTML = `<div class="p-4 bg-stone-100 rounded-md border border-stone-200">${htmlContent}</div>`;
+            });
+
+            enhancePromptBtn.addEventListener('click', async () => {
+                const basePrompt = generatedPromptEl.textContent;
+                const prompt = `Enhance the following basic video prompt with more descriptive details, professional cinematic language, and a richer stylistic description. Make it more vivid and compelling for a text-to-video AI model. Do not change the core subject or action. Base Prompt: "${basePrompt}"`;
+                
+                const enhancedPrompt = await callGemini(prompt);
+                generatedPromptEl.textContent = enhancedPrompt.replace(/["\n]/g, ''); // Clean up response
+            });
+
         });
-      });
-    });
-  </script>
+    </script>
 </body>
 </html>
